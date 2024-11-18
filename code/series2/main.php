@@ -1,6 +1,5 @@
 <?php
-include_once 'Exercice_0.1.php';
-include_once 'statistique.php';
+include'statistique.php';
 
 $salaire=array(1500,4500,2200,1500,3300,1800,1700,2000,4000);
 mediane($salaire);
