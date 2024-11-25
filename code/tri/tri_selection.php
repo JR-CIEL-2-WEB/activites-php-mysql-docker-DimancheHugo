@@ -1,7 +1,6 @@
 <?php
 
 $t=array(15,12,9,18,14,16,20,7,10,11);
-$tr=array(15,12,9,18,14,16,20,7,10,11);
 $n=0;
 $n=0;
 $min=0;
@@ -26,22 +25,22 @@ function tri_selection($t){
 }
 echo "Tableau trié :". implode(",",tri_selection($t))."<br>";
 
-function tri_selection_ref(&$tr){
-    $n = count($tr);
+function tri_selection_ref(&$t){
+    $n = count($t);
     for($i=0;$i<$n-1;$i++){
         $min = $i;
         for($j=$i+1;$j<$n;$j++){
-            if($tr[$j]<$tr[$min]){
+            if($t[$j]<$t[$min]){
                 $min = $j;
             }
         }
         if($min != $i){
-            $temp = $tr[$i];
-            $tr[$i] = $tr[$min];
-            $tr[$min] = $temp;
+            $temp = $t[$i];
+            $t[$i] = $t[$min];
+            $t[$min] = $temp;
         }
     }
 }
-tri_selection_ref($tr);
-echo "Tableau trié par référence :". implode(",",$tr)."<br>";
+tri_selection_ref($t);
+echo "Tableau trié par référence :". implode(",",$t)."<br>";
 ?>
