@@ -1,0 +1,142 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background: linear-gradient(120deg, #6a11cb 0%, #2575fc 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Form Container */
+.contact-clean {
+    width: 100%;
+    max-width: 600px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease-in-out;
+}
+
+.contact-clean:hover {
+    transform: translateY(-5px);
+}
+
+/* Form Title */
+h2 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Input Fields */
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #2575fc;
+    box-shadow: 0 0 10px rgba(37, 117, 252, 0.4);
+}
+
+/* Textarea */
+textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* Error Messages */
+.error-message {
+    display: none;
+    color: #e74c3c;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+/* Form Check (Checkbox) */
+.form-check-input {
+    margin-right: 10px;
+}
+
+.form-check-label {
+    font-size: 1rem;
+    color: #333;
+}
+
+.form-check-input:checked {
+    background-color: #2575fc;
+    border-color: #2575fc;
+}
+
+/* Submit Button */
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #2575fc;
+    color: #fff;
+    font-size: 1.125rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+    background-color: #1a5bb8;
+    transform: translateY(-2px);
+}
+
+/* Success / Error Messages */
+.alert {
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: #2ecc71;
+    color: #fff;
+}
+
+.alert-danger {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+/* Small screen responsiveness */
+@media (max-width: 767px) {
+    .contact-clean {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    button[type="submit"] {
+        font-size: 1rem;
+    }
+}
