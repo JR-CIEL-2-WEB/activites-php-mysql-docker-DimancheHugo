@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte avec plusieurs courses</title>
+    <style>
+        #map {
+            height: 100%;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sélectionner et afficher une course</h1>
+        <label for="courses">Sélectionnez une course :</label>
+        <select id="courses">
+            <option value="">-- Choisissez une course --</option>
+            <option value="1">Course 1 - Parc des Buttes-Chaumont</option>
+            <option value="2">Course 2 - Parc Monceau</option>
+            <option value="3">Course 3 - Bois de Boulogne</option>
+        </select>
+    </div>
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7Y32T_PJHZxYcK3BJYJFNwSl6cuvLXpo&callback=initMap" async defer></script>
+    <script>
+        let map;
+        let currentMarkers = [];
+        let currentPolyline = null;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 14,
+                center: { lat: 48.8525, lng: 2.3470 }, // Centré sur Paris
+                mapTypeId: "terrain",
+            });
+
+            // Ajoute un événement pour détecter la sélection d'une course
+            const select = document.getElementById('courses');
+            select.addEventListener('change', function () {
+                const selectedCourseId = this.value;
+
+                if (selectedCourseId) {
+                    loadCourse(selectedCourseId); // Charger uniquement la course sélectionnée
+                } else {
+                    clearMapElements(); // Vide la carte si aucune course n'est sélectionnée
+                }
+            });
+        }
+
+        // Charge les données de la course sélectionnée via traitement.php
+        function loadCourse(courseId) {
+            fetch(`traitement.php?id=${courseId}`) // Appeler le backend avec l'ID de la course
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur lors du chargement des données.');
+                    }
+                    return response.json();
+                })
+                .then(course => {
+                    displayCourseOnMap(course); // Affiche les données sur la carte
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement de la course:', error);
+                });
+        }
+
+        // Affiche les marqueurs et le chemin de la course sur la carte
+        function displayCourseOnMap(course) {
+            clearMapElements(); // Supprime les anciens marqueurs et polylignes
+
+            const path = [];
+            const infowindow = new google.maps.InfoWindow();
+
+            course.marker.forEach(point => {
+                const position = { lat: parseFloat(point.lat), lng: parseFloat(point.lng) };
+
+                const marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    title: course.name,
+                });
+
+                marker.addListener('click', () => {
+                    infowindow.setContent(`<div><strong>${course.name}</strong></div>`);
+                    infowindow.open(map, marker);
+                });
+
+                currentMarkers.push(marker);
+                path.push(position);
+            });
+
+            currentPolyline = new google.maps.Polyline({
+                path: path,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+            });
+            currentPolyline.setMap(map);
+
+            if (path.length > 0) {
+                map.setCenter(path[0]);
+            }
+        }
+
+        // Supprime les anciens marqueurs et polylignes de la carte
+        function clearMapElements() {
+            currentMarkers.forEach(marker => marker.setMap(null));
+            currentMarkers = [];
+
+            if (currentPolyline) {
+                currentPolyline.setMap(null);
+                currentPolyline = null;
+            }
+        }
+    </script>
+</body>
+</html>
