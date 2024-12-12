@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Carte avec plusieurs courses</title>
+</head>
+<body>
+
+<h1>Sélectionner et afficher une course</h1>
+<hr>
+
+<!-- Menu déroulant pour sélectionner la course -->
+<label for="courses">Sélectionnez une course :</label>
+<select id="courses">
+    <option value="">-- Choisissez une course --</option>
+</select>
+
+<!-- Carte Google Maps -->
+<div id="map"></div>
+
+<style type="text/css">
+    #map {
+        height: 100%;
+    }
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<!-- API Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA7Y32T_PJHZxYcK3BJYJFNwSl6cuvLXpo&callback=initMap" async defer></script>
+
+<script>
+let coursesData = [];
+let map;
+let currentMarkers = [];
+let currentPolyline = null;
+
+// Charger les courses dès que la page est prête
+window.onload = fetchCourses;
+
+// Récupère les courses depuis un fichier JSON
+function fetchCourses() {
+    fetch("course.json")
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Erreur lors du chargement du fichier JSON");
+        }
+        return response.json();
+    })
+    .then(data => {
+        coursesData = data.courses;
+        populateDropdown();
+    })
+    .catch(error => {
+        console.error("Erreur lors de la requête Fetch:", error);
+    });
+}
+
+// Ajoute les options au menu déroulant
+function populateDropdown() {
+    const select = document.getElementById('courses');
+    for (let i = 0; i < coursesData.length; i++) {
+        const option = document.createElement('option');
+        option.value = coursesData[i].id;
+        option.textContent = coursesData[i].name;
+        select.appendChild(option);
+    }
+}
+
+// Initialise la carte Google Maps
+function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 12,
+        center: { lat: 48.8525, lng: 2.3470 }, // Centré sur Paris
+        mapTypeId: "terrain",
+    });
+
+    const infowindow = new google.maps.InfoWindow();
+
+    // Ajoute un événement pour détecter la sélection d'une course
+    document.getElementById('courses').addEventListener('change', function() {
+        const selectedCourseId = this.value;
+        let selectedCourse = null;
+
+        for (let i = 0; i < coursesData.length; i++) {
+            if (coursesData[i].id == selectedCourseId) {
+                selectedCourse = coursesData[i];
+                break;
+            }
+        }
+
+        if (selectedCourse) {
+            // Supprime les anciens marqueurs et polyline s'ils existent
+            clearMapElements();
+
+            // Trace les points de la nouvelle course
+            const path = [];
+            for (let i = 0; i < selectedCourse.marker.length; i++) {
+                const point = selectedCourse.marker[i];
+                const position = { lat: parseFloat(point.lat), lng: parseFloat(point.lng) };
+
+                // Crée un nouveau marqueur
+                const marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    title: selectedCourse.name,
+                });
+
+                // Ajoute un InfoWindow pour chaque marqueur
+                marker.addListener("click", () => {
+                    infowindow.setContent(`<div><strong>${selectedCourse.name}</strong></div>`);
+                    infowindow.open(map, marker);
+                });
+
+                // Ajoute le marqueur à la liste pour suppression ultérieure
+                currentMarkers.push(marker);
+
+                // Ajoute la position au chemin de la polyline
+                path.push(position);
+            }
+
+            // Crée la polyline reliant les points de la course
+            currentPolyline = new google.maps.Polyline({
+                path: path,
+                geodesic: true,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+            });
+            currentPolyline.setMap(map);
+
+            // Centre la carte sur le premier point de la course
+            map.setCenter(path[0]);
+        }
+    });
+}
+
+// Supprime les anciens marqueurs et polyline de la carte
+function clearMapElements() {
+    for (let i = 0; i < currentMarkers.length; i++) {
+        currentMarkers[i].setMap(null); // Supprime les marqueurs
+    }
+    currentMarkers = [];
+    
+    if (currentPolyline) {
+        currentPolyline.setMap(null); // Supprime la polyline
+        currentPolyline = null;
+    }
+}
+</script>
+
+</body>
+</html>
