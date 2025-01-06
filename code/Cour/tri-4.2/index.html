@@ -1,42 +1,31 @@
 <!DOCTYPE html>
 <html>
     <header>
+
     </header>
     <body>
         <h1>tri selection</h1>
         <h3>saisie element du tableau</h3>
         <h4>envoie du tableau via ajax</h4>
         <h4 id="response"></h4>
+
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script>
-        // Initialisation du tableau et de la saisie
-        let a = [];
-        let nbr = 0;
-
-        // Collecte des données de l'utilisateur
+        let a = []
+        let nbr =0
         do {
-            nbr = Number(prompt("Saisissez un nombre > 0 (ou un nombre négatif pour terminer)"));
-            if (nbr > 0) {
-                a.push(nbr);
-            }
-        } while (nbr > 0);
-
-        // Envoi des données au serveur Mock Postman via AJAX
+            nbr =Number(prompt('saisses un nombre > 0')); 
+            a.push(nbr) ;
+        } while (nbr>0);
         $.ajax({
-            url: "https://84cc97ac-615d-49c2-805c-2b6b63df2429.mock.pstmn.io",
-            type: "GET",
-            contentType: "application/json",
-            data: JSON.stringify({ list: a }), // Transmettre le tableau
-            success: function (response) {
-                // Réponse du serveur
-                let htmlH4 = document.getElementById("response");
-                htmlH4.innerHTML = `Tableau trié : ${response.sortedArray.join(", ")}<br>Médiane : ${response.median}`;
-            },
-            error: function (xhr, status, error) {
-                console.error("Erreur :", error);
-                alert("Une erreur est survenue lors de l'envoi des données.");
-            },
-        });
+            url: `https://fc8b32e8-910c-4510-908c-6b2b295cad73.mock.pstmn.io?list=[1,2,3,4,5]`,
+            type: 'GET',
+            success: function(response) {
+            // the respone of php here   
+            let htmlH4 = document.getElementById('response');
+            htmlH4.innerHTML = `mediane = ${response.median}`;
+            }
+        })
     </script>
 </html>
