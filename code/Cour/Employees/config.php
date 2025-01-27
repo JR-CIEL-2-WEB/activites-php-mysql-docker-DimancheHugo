@@ -3,8 +3,8 @@
 
 $host = 'mysql';
 $dbname = 'appdb';
-$user = 'eleve';
-$password = 'eleve';
+$user = 'root';
+$password = 'root';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $password);
